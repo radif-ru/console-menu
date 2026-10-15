@@ -20,6 +20,9 @@ const BASE_DELIVERY_KM = 10
 const BASE_DELIVERY_PRICE = 200
 const PRICE_PER_EXTRA_KM = 25
 
+const SKIPPED_STEP = 4
+const LAST_BUILT_STEP = 10
+
 /**
  * Превращает ответ пользователя в число; пустой ответ — NaN, а не 0.
  * @param {string} answer
@@ -160,6 +163,31 @@ function printDelivery(distance, total) {
   console.log(`Расстояние ${distance} км, заказ ${total} руб.: доставка ${price} руб.`)
 }
 
+// --- 3. Лестница ---
+
+/**
+ * Печатает построенные ступени: 4-я пропускается (continue), после 10-й
+ * строительство останавливается (break). Возвращает число построенных ступеней.
+ * @param {number} height
+ * @returns {number}
+ */
+function printSteps(height) {
+  let built = 0
+  for (let step = 1; step <= height; step++) {
+    if (step === SKIPPED_STEP) {
+      continue
+    }
+    if (step > LAST_BUILT_STEP) {
+      console.log('Дальше лестница не построена')
+      break
+    }
+    console.log(`Ступень ${step}`)
+    built++
+  }
+  console.log(`Всего построено: ${built}`)
+  return built
+}
+
 // --- Меню ---
 
 async function main() {
@@ -186,6 +214,13 @@ async function main() {
       }
       break
     }
+    case 3: {
+      const height = await askNumber(ask, 'Высота лестницы: ')
+      if (height !== null) {
+        printSteps(height)
+      }
+      break
+    }
     default:
       console.log(UNKNOWN_TASK)
   }
@@ -197,4 +232,13 @@ if (require.main === module) {
   main()
 }
 
-module.exports = { toNumber, isNonNegativeNumber, ticketPrice, maxTickets, printTicketResult, deliveryPrice, printDelivery }
+module.exports = {
+  toNumber,
+  isNonNegativeNumber,
+  ticketPrice,
+  maxTickets,
+  printTicketResult,
+  deliveryPrice,
+  printDelivery,
+  printSteps,
+}
