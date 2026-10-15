@@ -14,6 +14,12 @@ const UNKNOWN_TASK = 'такой задачи нет'
 const UNKNOWN_CATEGORY = 'неизвестная категория'
 const INVALID_NUMBER = 'нужно ввести неотрицательное число'
 
+const FREE_DELIVERY_TOTAL = 3000
+const FREE_DELIVERY_KM = 3
+const BASE_DELIVERY_KM = 10
+const BASE_DELIVERY_PRICE = 200
+const PRICE_PER_EXTRA_KM = 25
+
 /**
  * Превращает ответ пользователя в число; пустой ответ — NaN, а не 0.
  * @param {string} answer
@@ -127,6 +133,33 @@ function printTicketResult(category, budget) {
   console.log(`Категория ${category}, билет ${price} руб., бюджет ${budget} руб.: можно купить ${count} шт.`)
 }
 
+// --- 2. Доставка заказа ---
+
+/**
+ * Стоимость доставки: от 3000 руб. или до 3 км — бесплатно, до 10 км — 200 руб.,
+ * дальше — 200 руб. и 25 руб. за каждый километр после десятого.
+ * @param {number} distance
+ * @param {number} total
+ * @returns {number}
+ */
+function deliveryPrice(distance, total) {
+  if (total >= FREE_DELIVERY_TOTAL || distance <= FREE_DELIVERY_KM) {
+    return 0
+  }
+  const extraKm = distance > BASE_DELIVERY_KM ? distance - BASE_DELIVERY_KM : 0
+  return BASE_DELIVERY_PRICE + extraKm * PRICE_PER_EXTRA_KM
+}
+
+/**
+ * Печатает расстояние, сумму заказа и стоимость доставки одной строкой.
+ * @param {number} distance
+ * @param {number} total
+ */
+function printDelivery(distance, total) {
+  const price = deliveryPrice(distance, total)
+  console.log(`Расстояние ${distance} км, заказ ${total} руб.: доставка ${price} руб.`)
+}
+
 // --- Меню ---
 
 async function main() {
@@ -145,6 +178,14 @@ async function main() {
       }
       break
     }
+    case 2: {
+      const distance = await askNumber(ask, 'Расстояние: ')
+      const total = distance === null ? null : await askNumber(ask, 'Сумма заказа: ')
+      if (total !== null) {
+        printDelivery(distance, total)
+      }
+      break
+    }
     default:
       console.log(UNKNOWN_TASK)
   }
@@ -156,4 +197,4 @@ if (require.main === module) {
   main()
 }
 
-module.exports = { toNumber, isNonNegativeNumber, ticketPrice, maxTickets, printTicketResult }
+module.exports = { toNumber, isNonNegativeNumber, ticketPrice, maxTickets, printTicketResult, deliveryPrice, printDelivery }
