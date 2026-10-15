@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Check syntax
+        run: npm run check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run menu scenarios from the task
+        shell: bash
+        run: |
+          printf '1\n2\n2300\n' | node index.js | grep -qF 'Категория 2, билет 500 руб., бюджет 2300 руб.: можно купить 4 шт.'
+          printf '2\n12\n2500\n' | node index.js | grep -qF 'Расстояние 12 км, заказ 2500 руб.: доставка 250 руб.'
+          printf '3\n12\n' | node index.js | grep -qF 'Всего построено: 9'
+          printf '7\n' | node index.js | grep -qF 'такой задачи нет'
