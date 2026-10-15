@@ -1,0 +1,12 @@
+{
+  "name": "console-menu",
+  "version": "1.0.0",
+  "description": "Консольное меню на Node.js: билетная касса, доставка заказа и лестница",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Radif Ilaltdinov <i@radif.ru>",
+  "license": "UNLICENSED",
+  "private": true
+}
